@@ -1,7 +1,7 @@
 SELECT
   productSKU,
   COUNT(DISTINCT v2ProductName) AS product_count,
-  STRING_AGG(DISTINCT v2ProductName LIMIT 5) AS product_name
+  ARRAY_AGG(DISTINCT v2ProductName LIMIT 5) AS product_name
 FROM `data-to-insights.ecommerce.all_sessions_raw`
   WHERE v2ProductName IS NOT NULL
   GROUP BY productSKU
