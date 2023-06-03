@@ -1,5 +1,5 @@
-SELECT users.id, users.name
+SELECT id, name
 FROM users
-WHERE users.id NOT IN
+WHERE id NOT IN
 (SELECT DISTINCT user_id FROM trips WHERE fare_amount >= 200)
-ORDER BY user_id;
+ORDER BY id;
