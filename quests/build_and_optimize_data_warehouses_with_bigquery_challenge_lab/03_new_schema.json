@@ -246,7 +246,6 @@
          "type": "FLOAT"
        }
      ],
-     "mode": "REPEATED",
      "name": "mobility",
      "type": "RECORD"
   }
