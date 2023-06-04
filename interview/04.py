@@ -1,17 +1,19 @@
 class BankAccount:
+  def __init__(self):
+    self.balance = 0
+    self.history = [0]
+    
+  def transact(self, value):
 
-    def __init__(self):
-        self.balance = 0
-        self.history = [0]
+    new_balance = self.balance + value
 
-    def transact(self, value):
-        if value > 0:
-            self.balance += value
-        else:
-            self.balance -= value
-        self.history.append(self.balance)
-        return self.balance
+    if new_balance >= 0:
+      self.balance = new_balance
+      self.history.append(self.balance)
+    else:
+      print("Error: cannot apply transaction on current balance!")
 
-    def balance_history(self):
-        return self.history
-
+    return self.balance
+    
+  def balance_history(self):
+    return self.history
