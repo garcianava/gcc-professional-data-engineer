@@ -212,41 +212,40 @@
     "type": "FLOAT"
   },
   {
-    "name": "population",
-    "type": "INTEGER"
-  },
-  {
-    "name": "country_area",
-    "type": "FLOAT"
-  },
-  {
-     "fields": [
-       {
-         "name": "avg_retail",
-         "type": "FLOAT"
-       },
-       {
-         "name": "avg_grocery",
-         "type": "FLOAT"
-       },
-       {
-         "name": "avg_parks",
-         "type": "FLOAT"
-       },
-       {
-         "name": "avg_transit",
-         "type": "FLOAT"
-       },
-       {
-         "name": "avg_workplace",
-         "type": "FLOAT"
-       },
-       {
-         "name": "avg_residential",
-         "type": "FLOAT"
-       }
-     ],
-     "name": "mobility",
-     "type": "RECORD"
+    "fields": [
+      {
+        "mode": "NULLABLE",
+        "name": "avg_retail",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "avg_grocery",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "avg_parks",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "avg_transit",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "avg_workplace",
+        "type": "FLOAT"
+      },
+      {
+        "mode": "NULLABLE",
+        "name": "avg_residential",
+        "type": "FLOAT"
+      }
+    ],
+    "mode": "NULLABLE",
+    "name": "mobility",
+    "type": "RECORD"
   }
 ]
