@@ -1,11 +1,12 @@
-SELECT
-  t0.country_name, t0.date,
-  t0.mobility.avg_retail, t1.avg_retail,
-  t0.mobility.avg_grocery, t1.avg_grocery,
-  t0.mobility.avg_parks, t1.avg_parks,
-  t0.mobility.avg_transit, t1.avg_transit,
-  t0.mobility.avg_workplace, t1.avg_workplace,
-  t0.mobility.avg_residential, t1.avg_residential
+UPDATE
+   `covid19.analytics` t0
+SET
+   t0.mobility.avg_retail      = t1.avg_retail,
+   t0.mobility.avg_grocery     = t1.avg_grocery,
+   t0.mobility.avg_parks       = t1.avg_parks,
+   t0.mobility.avg_transit     = t1.avg_transit,
+   t0.mobility.avg_workplace   = t1.avg_workplace,
+   t0.mobility.avg_residential = t1.avg_residential
 FROM
   covid19.analytics AS t0
 JOIN
