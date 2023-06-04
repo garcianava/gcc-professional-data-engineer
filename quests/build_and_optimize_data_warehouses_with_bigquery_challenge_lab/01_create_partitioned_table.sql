@@ -7,4 +7,4 @@
  ) AS
  SELECT *
  FROM `bigquery-public-data.covid19_govt_response.oxford_policy_tracker`
- WHERE alpha_3_code not in ('GBR', 'BRA', 'CAN', 'USA');
+WHERE alpha_3_code not in ('GBR', 'BRA', 'CAN', 'USA');
