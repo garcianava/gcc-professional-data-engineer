@@ -220,31 +220,34 @@
     "type": "FLOAT"
   },
   {
-    "name": "mobility",
-    "type": "RECORD"
-  },
-  {
-    "name": "mobility.avg_retail",
-    "type": "FLOAT"
-  },
-  {
-    "name": "mobility.avg_grocery",
-    "type": "FLOAT"
-  },
-  {
-    "name": "mobility.avg_parks",
-    "type": "FLOAT"
-  },
-  {
-    "name": "mobility.avg_transit",
-    "type": "FLOAT"
-  },
-  {
-    "name": "mobility.avg_workplace",
-    "type": "FLOAT"
-  },
-  {
-    "name": "mobility.avg_residential",
-    "type": "FLOAT"
+     "fields": [
+       {
+         "name": "avg_retail",
+         "type": "FLOAT"
+       },
+       {
+         "name": "avg_grocery",
+         "type": "FLOAT"
+       },
+       {
+         "name": "avg_parks",
+         "type": "FLOAT"
+       },
+       {
+         "name": "avg_transit",
+         "type": "FLOAT"
+       },
+       {
+         "name": "avg_workplace",
+         "type": "FLOAT"
+       },
+       {
+         "name": "avg_residential",
+         "type": "FLOAT"
+       },
+     ],
+     "mode": "REPEATED",
+     "name": "mobility",
+     "type": "RECORD"
   }
 ]
