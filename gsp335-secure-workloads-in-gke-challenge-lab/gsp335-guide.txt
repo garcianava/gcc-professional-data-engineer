@@ -1,0 +1,122 @@
+### GSP 335 Secure Workloads in GKE: Challenge Lab
+
+
+### Task 0: Download the necessary files
+
+
+### Task 1: Setup Cluster
+
+
+### Task 2: Setup WordPress
+
+### 5. Create the service account
+IAM -> Service Accounts
+
+### 6. Bind the service account to your project, give the role roles/cloudsql.client
+
+
+### 7. Save the service account credentials in a json file
+
+
+GKE Cluster -> Connect -> Get Credentials
+
+
+### 8. Save the service account json file as a secret in your Kubernetes cluster
+
+
+
+### Task 3: Setup Ingress with TLS
+
+### 13. Make sure you add and update the stable repo for helm
+### helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm repo add stable https://charts.helm.sh/stable
+helm repo update
+
+### 14. Install stable nginx-ingress (call it nginx-ingress)
+helm install nginx-ingress stable/nginx-ingress
+
+### remove hyphens from LAB_USERNAME !!!!
+
+student04411157500f9d.labdns.xyz
+
+### 17. Install cert-manager.io (make sure you use the right version)
+### kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.16.0/cert-manager.yaml
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.1.0/cert-manager.yaml
+
+
+### 18. Edit issuer.yaml and set the email address to your email address
+### use the email address in the service account created for the SQL instance
+sa-508@qwiklabs-gcp-00-4654816afc0f.iam.gserviceaccount.com
+
+### wait for the DNS host name to show WordPress welcome screen before testing completed task
+
+
+
+
+### Task 4: Set up Network Policy
+
+### create the network policy allow-nginx-access-to-wordpress
+### add the following code
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-nginx-access-to-internet
+spec:
+  podSelector:
+    matchLabels:
+      app: nginx-ingress
+  policyTypes:
+  - Ingress
+  ingress:
+  - {}
+  
+  
+  
+  
+  
+### Task 5: Setup Binary Authorization
+
+### Enable Binary Authorization API
+### GKE -> Clusters -> Enable Binary Authorization
+
+### Console -> Security -> Binary Authorization Setup
+
+### Configure Policy -> Project Default Rule -> Disallow All Images
+
+### Image Exempt from Deployment Rules -> Add Image Path
+
+docker.io/library/wordpress:latest
+us.gcr.io/k8s-artifacts-prod/ingress-nginx/*
+gcr.io/cloudsql-docker/*
+quay.io/jetstack/*
+
+
+
+### Task 6: Setup Pod Security Policy
+
+kubectl apply -f psp-role.yaml
+
+kubectl apply -f psp-use.yaml
+
+
+### repair the psp-restrictive manifest
+vi psp-restrictive.yaml
+
+### replace     apiVersion: extensions/v1beta1
+### with	apiVersion: policy/v1beta1
+
+kubectl apply -f psp-restrictive.yaml
+
+
+
+
+
+
+
+
+
+
+
+

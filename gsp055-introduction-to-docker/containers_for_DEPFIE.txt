@@ -1,0 +1,97 @@
+
+
+
+### from GSP055: Introduction to Docker
+
+docker run hello-world
+docker images
+docker ps
+
+
+### Dockerfile and JavaScript application are in test/ directory
+
+### build the container image
+docker build -t node-app:0.1 .
+
+### verify the new image is present, along with its dependency to node image
+docker images
+
+### run a container from the image
+docker run -p 4000:80 --name my-app-container node-app:0.1 &
+
+### verify the HTTP server
+curl http://localhost:4000
+
+
+### stop and remove the container
+docker stop my-app-container
+docker rm my-app-container
+
+
+### pass tht GCP Project ID to an environment variable
+PROJECT_ID=spheric-rhythm-234515
+
+### tag the image for uploading to GCR
+docker tag node-app:0.1 gcr.io/$PROJECT_ID/node-app:0.1
+
+### push the image to Google Container Registry
+docker push gcr.io/$PROJECT_ID/node-app:0.1
+
+
+### stop and remove all active containers
+docker stop CONTAINER_NAME
+docker rm CONTAINER_NAME
+
+### remove child images
+docker rmi node-app:0.1 gcr.io/spheric-rhythm-234515/node-app:0.1
+
+### remove parent image
+docker rmi node:6
+
+### pull the image from GCR
+docker pull gcr.io/$PROJECT_ID/node-app:0.1
+
+### run a container with the pulled image
+docker run -p 4000:80 -d gcr.io/$PROJECT_ID/node-app:0.1 &
+
+### confirm the HTTP server is running
+curl http://localhost:4000
+
+### stop and remove the container
+docker stop CONTAINER_NAME
+docker rm CONTAINER_NAME
+
+### revove the image pulled from GCR
+docker rmi node-app:0.1 gcr.io/spheric-rhythm-234515/node-app:0.1
+
+
+
+
+### from GSP021: Orchestrating the Cloud with Kubernetes
+
+### config the GCP zone value
+gcloud config set compute/zone us-central1-a
+
+### spin-up a Kubernetes cluster
+gcloud container clusters create io
+
+### ensure the project identifier is an env var
+PROJECT_ID=spheric-rhythm-234515
+
+### use the image in GCR to create a deployment on GKE
+kubectl create deployment my-app-deployment --image=gcr.io/$PROJECT_ID/node-app:0.1
+
+### expose the deployment on port 80
+kubectl expose deployment my-app-deployment --port 80 --type LoadBalancer
+
+### wait for the service to get an external IP
+kubectl get services
+
+### verify te HTTP server is working
+curl http://EXTERNAL_IP:80
+
+
+
+
+
+

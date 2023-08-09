@@ -1,0 +1,187 @@
+### GSP 318 Deploy to Kubrnetes on GCP Challenge Lab
+
+### set zone?
+### gcloud config set compute/zone us-east1-b
+
+
+
+
+### Task 1: Create a Docker image and store the Dockerfile
+
+### copy the marking scripts
+source <(gsutil cat gs://cloud-training/gsp318/marking/setup_marking.sh)
+
+### clone the gcloud source repository
+gcloud source repos clone valkyrie-app
+
+cd valkyrie-app
+
+### prepare the Dockerfile
+FROM golang:1.10
+WORKDIR /go/src/app
+COPY source .
+RUN go install -v
+ENTRYPOINT ["app","-single=true","-port=8080"]
+
+
+### find/write/review the application
+### the app is in valkyrie-app/source and the Dockerfile copies it to the path /go/src/app in the container
+
+
+### build the Docker image with the application
+docker build -t valkyrie-app:v0.0.1 .
+
+### verify the Docker image is present
+docker images | grep -c "valkyrie-app.*v0.0.1"
+
+
+
+
+### Task 2: Test the created Docker image
+
+### run Docker container from the image in the background
+docker run -p 8080:8080 --name valkyrie-app valkyrie-app:v0.0.1 &
+
+### verify the container is running
+curl -I 127.0.0.1:8080 2> /dev/null | grep -c "200 OK"
+
+
+
+
+### Task 3: Push the Docker image in the Container Repository
+
+### export the project id
+export PROJECT_ID=qwiklabs-gcp-01-fea571fb7aff
+
+### tag the Docker image
+docker tag valkyrie-app:v0.0.1 gcr.io/$PROJECT_ID/valkyrie-app:v0.0.1
+
+docker images
+
+### push the image to GCR
+docker push gcr.io/$PROJECT_ID/valkyrie-app:v0.0.1
+
+
+
+
+### Task 4: Deploy an application to the cluster
+
+### get credentials for the GKE cluster
+gcloud container clusters get-credentials valkyrie-dev --zone us-east1-d
+
+cd k8s
+
+### in deployment.yaml replace 'IMAGE_HERE' with 'gcr.io/qwiklabs-gcp-01-fea571fb7aff/valkyrie-app:v0.0.1'
+
+cd ..
+
+### create a Kubernetes Service to expose the application via a load balancer
+kubectl create -f k8s/deployment.yaml
+kubectl create -f k8s/service.yaml
+
+### in GKE console, Services and Ingress, verify the service for exposing the deployment is ready
+
+
+
+
+### Task 5: Update the deployment with a new version of valkyrie-app
+
+In GCP console -> GKE -> Workloads -> app-valkyrie -> Details -> Actions -> Scale
+update to 3 replicas
+
+while in the valkyrie-app directory:
+git merge origin/kurt-dev
+
+docker build -t valkyrie-app:v0.0.2 .
+docker tag valkyrie-app:v0.0.2 gcr.io/$PROJECT_ID/valkyrie-app:v0.0.2
+
+docker images
+
+docker push gcr.io/$PROJECT_ID/valkyrie-app:v0.0.2
+
+### make a rolling update to the deployment with the new version of the application
+
+kubectl edit deployment valkyrie-dev
+
+replace 'IMAGE_HERE' with 'gcr.io/$PROJECT_ID/valkyrie-app:v0.0.2'
+
+exit with :wq
+
+
+
+
+### Task 6: Create a pipeline in Jenkins to deploy your app
+
+docker ps
+
+### stop and remove all active containers with docker stop and docker rm
+
+### get the Jenkins password
+
+printf $(kubectl get secret cd-jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode);echo
+
+9OrNsVmYSs
+
+
+### pass the pod name to an environment variable
+export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/component=jenkins-master" -l "app.kubernetes.io/instance=cd" -o jsonpath="{.items[0].metadata.name}")
+
+cd-jenkins-7969875fff-mntp9
+
+
+### port-forward the pod (run in background)
+kubectl port-forward $POD_NAME 8080:8080 >> /dev/null &
+
+### web-preview in port 8080 to enter Jenkins UI
+
+### enter with user admin and the previously recovered password
+
+Manage Jenkins -> Security -> Manage Credentials
+
+System -> Global Credentials -> Add Credentials -> Google Service Account from Metadata -> Project_ID
+
+Jenkins -> New Item -> name:valkyrie-dev - Multibranch Pipeline
+
+In Jenkins/valkyrie-dev:
+
+set Display name to valkyrie-app
+set Add Source to Git
+
+In Cloud Source Repositories:
+SSH Authentication -> Manually Generated Credentials
+
+https://source.developers.google.com/p/qwiklabs-gcp-01-fea571fb7aff/r/valkyrie-app
+
+### copy the URL in the git clone command to the field 'Project Repository'
+### set credentials from the project ID
+
+### In Scan Multibranch Pipeline Triggers:
+### set to periodically, 1 minute
+
+Apply
+
+
+### edit Jenkinsfile
+### update environment with:
+project=PROJECT_ID 
+
+### edit source/html.go
+change cards color green to orange in <div> declarations
+
+
+### adjust Git settings, add, commit and push changes
+
+git config --global user.email $PROJECT_ID
+
+git config --global user.name $PROJECT_ID
+
+git add *
+
+git commit -m 'green cards to orange cards'
+
+git push origin master
+
+### in Jenkins: wait for Build Executor Status to complete (up to 5 minutes)
+
+
+
